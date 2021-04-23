@@ -1,7 +1,7 @@
 import nltk
 from nltk import CFG
 from nltk.draw.tree import draw_trees
-import re, sys
+import re
 
 lf_string = """
 S -> NP VP
@@ -31,7 +31,7 @@ def parse_sentence(sentence):
         for tree in parser.parse(sentence.split()):
             parses.append(tree)
         if parses == []:
-            print("No trees found")
+            print("This sentence is ungrammatical.")
         else:
             print(f'I found {len(parses)} tree(s) for this sentence.')
             draw_trees(*parses)
