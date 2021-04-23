@@ -38,9 +38,9 @@ def parse_sentence(sentence):
     except Exception as e:
         print("Error!", e)
         new_words = re.findall(r'(?<=\')\w+(?=\')',str(e))
-        print('Should I learn them?')
+        print('Should I learn them? (y/n)')
         reply = input()
-        if reply == "yes":
+        if reply == "y":
             learn_words(new_words)
             parse_sentence(sentence)
         else:
@@ -70,6 +70,7 @@ def show_productions(lhs):
 
 def learn_words(words):
     '''takes a list of words and adds the relevant productions to the grammar'''
+    words = list(set(words))
     new_rules = ""
     for w in words:
         print(f'What is the category of {w}?')
@@ -132,7 +133,7 @@ def main():
     elif user == "load grammar":
         load_grammar()
     elif user == "quit":
-        print("k bye")
+        print("bye!")
         return
     else:
         parse_sentence(user)
