@@ -3,7 +3,7 @@ from nltk import CFG
 from nltk.draw.tree import draw_trees
 import re
 
-lf_string = """
+lf_raw = """
 S -> NP VP
 NP -> Det N
 VP -> TV NP | DTV NP NP | SV S 
@@ -21,8 +21,12 @@ N -> Adj N
 VP -> VP Adv | VP PP
 """
 
-lf_grammar = CFG.fromstring(lf_string)
-parser = nltk.ChartParser(lf_grammar)
+# set the initial grammar to the predefined LF grammar above
+grammar_raw = lf_raw
+
+# build the grammar and parser objects from nltk
+grammar = CFG.fromstring(grammar_raw)
+parser = nltk.ChartParser(grammar)
 
 def parse_sentence(sentence):
     '''parses a string s and draws the trees'''
@@ -49,22 +53,22 @@ def parse_sentence(sentence):
 def update_parser():
     '''updates the grammar and parser'''
     global parser
-    parser = nltk.ChartParser(lf_grammar)
-    print("Grammar updated:\n",lf_grammar)
+    parser = nltk.ChartParser(grammar)
+    print(f"Grammar updated with {len(grammar.productions())} total productions.")
     return
     
 def update_grammar(s,reset=False):
     '''updates the grammar as a raw string'''
-    global lf_string, lf_grammar
+    global grammar_raw, grammar
     if reset:
-        lf_string = ''
-    lf_string += s
-    lf_grammar = CFG.fromstring(lf_string)
+        grammar_raw = ''
+    grammar_raw += s
+    grammar = CFG.fromstring(grammar_raw)
     return
 
 def show_productions(lhs):
     '''prints all productions for a given lhs as string'''
-    for pr in lf_grammar.productions(lhs=nltk.grammar.Nonterminal(lhs)):
+    for pr in grammar.productions(lhs=nltk.grammar.Nonterminal(lhs)):
         print(pr)
     return
 
@@ -82,6 +86,7 @@ def learn_words(words):
     
 def add_production():
     '''adds a production the the string from the user'''
+    print("Enter a new rule:")
     production = input()
     update_grammar("\n"+production)
     update_parser()
@@ -93,36 +98,35 @@ def save_grammar():
     name = input()
     filename = name + '.cfg'
     with open(filename, 'w') as f:
-        f.write(lf_string)
+        f.write(grammar_raw)
     print(f'Grammar saved as {filename}.')
     return
 
 def load_grammar():
     '''loads a grammar from a text file directly as a grammar object'''
-    global lf_grammar
+    global grammar
     print("What is the name of the grammar?")
     filename = input()
     new_grammar = nltk.data.load(f'file:{filename}',format='cfg')
-    lf_grammar = new_grammar
+    grammar = new_grammar
     update_parser()
     return
 
 def show_category(s):
     '''show all productions with s as the lhs'''
-    cats = lf_grammar.productions(lhs=nltk.grammar.Nonterminal(s))
+    cats = grammar.productions(lhs=nltk.grammar.Nonterminal(s))
     if cats == []:
         print('None found!')
     else:
         for p in cats:
             print(p)
     return
-   
 
 def main():
     print("Gimme a sentence:")
     user = input()
     if user == "show grammar":
-        print(lf_grammar)
+        print(grammar)
     elif re.match(r'(show category )(.*)',user):
         cat = re.match(r'(show category) (.*)',user).group(2)
         show_category(cat)
@@ -132,6 +136,9 @@ def main():
         save_grammar()
     elif user == "load grammar":
         load_grammar()
+    elif user == "reset grammar":
+        update_grammar(lf_raw,reset=True)
+        update_parser()
     elif user == "quit":
         print("bye!")
         return
