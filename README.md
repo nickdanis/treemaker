@@ -25,6 +25,7 @@ By default, a basic context-free grammar based on the grammar from *Language Fil
 - `add rule` Prompt for a new production to be added to the grammar.
 - `save grammar` Saves the grammar to a file.
 - `load grammar` Loads a grammar from a file.
+- `reset grammar` Resets the grammar to the default CFG.
 - `quit` 
 
 The format of the productions and grammars should follow that for [nltk](http://www.nltk.org/book/ch08.html). 
