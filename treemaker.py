@@ -87,39 +87,44 @@ def add_production():
     return
 
 def save_grammar():
+    '''saves grammar to a text file'''
     print("Give a name:")
     name = input()
     filename = name + '.cfg'
     with open(filename, 'w') as f:
         f.write(lf_string)
+    print(f'Grammar saved as {filename}.')
+    return
 
 def load_grammar():
+    '''loads a grammar from a text file directly as a grammar object'''
     global lf_grammar
     print("What is the name of the grammar?")
     filename = input()
     new_grammar = nltk.data.load(f'file:{filename}',format='cfg')
     lf_grammar = new_grammar
-    print(new_grammar)
     update_parser()
     return
 
-# def load_grammar():
-#     '''loads an entirely new grammar s as string and initializes'''
-#     global lf_string, lf_grammar, parser
-#     print("Paste grammar:")
-#     new_grammar = input()
-#     lf_grammar = CFG.fromstring(new_grammar)
-#     parser = nltk.ChartParser(lf_grammar)
-#     print("New grammar:\n",lf_grammar)
-#     return
-    
-    
+def show_category(s):
+    '''show all productions with s as the lhs'''
+    cats = lf_grammar.productions(lhs=nltk.grammar.Nonterminal(s))
+    if cats == []:
+        print('None found!')
+    else:
+        for p in cats:
+            print(p)
+    return
+   
 
 def main():
     print("Gimme a sentence:")
     user = input()
     if user == "show grammar":
         print(lf_grammar)
+    elif re.match(r'(show category )(.*)',user):
+        cat = re.match(r'(show category) (.*)',user).group(2)
+        show_category(cat)
     elif user == "add rule":
         add_production()
     elif user == "save grammar":
