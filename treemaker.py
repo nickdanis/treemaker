@@ -27,6 +27,7 @@ grammar_raw = lf_raw
 # build the grammar and parser objects from nltk
 grammar = CFG.fromstring(grammar_raw)
 parser = nltk.ChartParser(grammar)
+latex = False
 
 def parse_sentence(sentence):
     '''parses a string s and draws the trees'''
@@ -38,7 +39,11 @@ def parse_sentence(sentence):
             print("This sentence is ungrammatical.")
         else:
             print(f'I found {len(parses)} tree(s) for this sentence.')
-            draw_trees(*parses)
+            if latex:
+                for tree in parses:
+                    print(tree.pformat_latex_qtree())
+            else:
+                draw_trees(*parses)
     except Exception as e:
         print("Error!", e)
         new_words = re.findall(r'(?<=\')\w+(?=\')',str(e))
@@ -49,6 +54,15 @@ def parse_sentence(sentence):
             parse_sentence(sentence)
         else:
             return
+
+def toggle_latex():
+    global latex
+    latex = not latex
+    if latex:
+        print("LaTeX output enabled")
+    else:
+        print("LaTeX output disabled")
+    return
         
 def update_parser():
     '''updates the grammar and parser'''
@@ -116,7 +130,7 @@ def show_category(s):
     '''show all productions with s as the lhs'''
     cats = grammar.productions(lhs=nltk.grammar.Nonterminal(s))
     if cats == []:
-        print('None found!')
+        print('Category not found.')
     else:
         for p in cats:
             print(p)
@@ -139,6 +153,8 @@ def main():
     elif user == "reset grammar":
         update_grammar(lf_raw,reset=True)
         update_parser()
+    elif user == "toggle latex":
+        toggle_latex()
     elif user == "quit":
         print("bye!")
         return
