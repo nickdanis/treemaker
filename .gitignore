@@ -1,2 +1,3 @@
 # ignore all custom cfg grammars
 *.cfg
+sandbox.py
