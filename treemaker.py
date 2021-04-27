@@ -3,32 +3,6 @@ from nltk import CFG
 from nltk.draw.tree import draw_trees
 import re
 
-lf_raw = """
-S -> NP VP
-NP -> Det N
-VP -> TV NP | DTV NP NP | SV S 
-PP -> P NP
-N -> 'cat' | 'dog' | 'professor' | 'student' | 'computer'
-Det -> 'the' | 'a' | 'their'
-Adj -> 'sleepy' | 'energetic'
-Adv -> 'yesterday' | 'easily'
-TV -> 'photographed' | 'saw'
-DTV -> 'gave' | 'sent'
-SV -> 'said'
-P -> 'in' | 'at' | 'with' | 'for' | 'on'
-N -> N PP
-N -> Adj N 
-VP -> VP Adv | VP PP
-"""
-
-# set the initial grammar to the predefined LF grammar above
-grammar_raw = lf_raw
-
-# build the grammar and parser objects from nltk
-grammar = CFG.fromstring(grammar_raw)
-parser = nltk.ChartParser(grammar)
-latex = False
-
 def parse_sentence(sentence):
     '''parses a string s and draws the trees'''
     parses = []
@@ -136,30 +110,65 @@ def show_category(s):
             print(p)
     return
 
+def reset_grammar():
+    '''resets the grammar to the default LF cfg'''
+    update_grammar(lf_raw,reset=True)
+    update_parser()
+    return
+
+def show_grammar():
+    '''prints the current grammar'''
+    print(grammar)
+    return
+
 def main():
     print("Gimme a sentence:")
     user = input()
-    if user == "show grammar":
-        print(grammar)
-    elif re.match(r'(show category )(.*)',user):
+    if re.match(r'(show category )(.*)',user):
         cat = re.match(r'(show category) (.*)',user).group(2)
         show_category(cat)
-    elif user == "add rule":
-        add_production()
-    elif user == "save grammar":
-        save_grammar()
-    elif user == "load grammar":
-        load_grammar()
-    elif user == "reset grammar":
-        update_grammar(lf_raw,reset=True)
-        update_parser()
-    elif user == "toggle latex":
-        toggle_latex()
+    elif user in dispatch:
+        dispatch[user]()
     elif user == "quit":
         print("bye!")
         return
     else:
         parse_sentence(user)
     main()
+
+dispatch = {
+    "add rule" : add_production,
+    "save grammar" : save_grammar,
+    "load grammar" : load_grammar,
+    "reset grammar" : reset_grammar,
+    "toggle latex" : toggle_latex,
+    "show grammar" : show_grammar
+}
+
+lf_raw = """
+S -> NP VP
+NP -> Det N
+VP -> TV NP | DTV NP NP | SV S 
+PP -> P NP
+N -> 'cat' | 'dog' | 'professor' | 'student' | 'computer'
+Det -> 'the' | 'a' | 'their'
+Adj -> 'sleepy' | 'energetic'
+Adv -> 'yesterday' | 'easily'
+TV -> 'photographed' | 'saw'
+DTV -> 'gave' | 'sent'
+SV -> 'said'
+P -> 'in' | 'at' | 'with' | 'for' | 'on'
+N -> N PP
+N -> Adj N 
+VP -> VP Adv | VP PP
+"""
+
+# set the initial grammar to the predefined LF grammar above
+grammar_raw = lf_raw
+
+# build the grammar and parser objects from nltk
+grammar = CFG.fromstring(grammar_raw)
+parser = nltk.ChartParser(grammar)
+latex = False
 
 main()
