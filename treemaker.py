@@ -140,41 +140,41 @@ def main():
         parse_sentence(user)
     main()
 
-category = re.compile(r'(show category )(.*)')
 
-dispatch = {
-    "add rule" : add_production,
-    "save grammar" : save_grammar,
-    "load grammar" : load_grammar,
-    "reset grammar" : reset_grammar,
-    "toggle latex" : toggle_latex,
-    "show grammar" : show_grammar
-}
+if __name__ == "__main__":
+    dispatch = {
+        "add rule" : add_production,
+        "save grammar" : save_grammar,
+        "load grammar" : load_grammar,
+        "reset grammar" : reset_grammar,
+        "toggle latex" : toggle_latex,
+        "show grammar" : show_grammar
+    }
 
-lf_raw = """
-S -> NP VP
-NP -> Det N
-VP -> TV NP | DTV NP NP | SV S 
-PP -> P NP
-N -> 'cat' | 'dog' | 'professor' | 'student' | 'computer'
-Det -> 'the' | 'a' | 'their'
-Adj -> 'sleepy' | 'energetic'
-Adv -> 'yesterday' | 'easily'
-TV -> 'photographed' | 'saw'
-DTV -> 'gave' | 'sent'
-SV -> 'said'
-P -> 'in' | 'at' | 'with' | 'for' | 'on'
-N -> N PP
-N -> Adj N 
-VP -> VP Adv | VP PP
-"""
+    lf_raw = """
+    S -> NP VP
+    NP -> Det N
+    VP -> TV NP | DTV NP NP | SV S 
+    PP -> P NP
+    N -> 'cat' | 'dog' | 'professor' | 'student' | 'computer'
+    Det -> 'the' | 'a' | 'their'
+    Adj -> 'sleepy' | 'energetic'
+    Adv -> 'yesterday' | 'easily'
+    TV -> 'photographed' | 'saw'
+    DTV -> 'gave' | 'sent'
+    SV -> 'said'
+    P -> 'in' | 'at' | 'with' | 'for' | 'on'
+    N -> N PP
+    N -> Adj N 
+    VP -> VP Adv | VP PP
+    """
 
-# set the initial grammar to the predefined LF grammar above
-grammar_raw = lf_raw
+    # set the initial grammar to the predefined LF grammar above
+    grammar_raw = lf_raw
 
-# build the grammar and parser objects from nltk
-grammar = CFG.fromstring(grammar_raw)
-parser = nltk.ChartParser(grammar)
-latex = False
+    # build the grammar and parser objects from nltk
+    grammar = CFG.fromstring(grammar_raw)
+    parser = nltk.ChartParser(grammar)
+    latex = False
 
-main()
+    main()
