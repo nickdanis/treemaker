@@ -26,6 +26,8 @@ By default, a basic context-free grammar based on the grammar from *Language Fil
 - `save grammar` Saves the grammar to a file.
 - `load grammar` Loads a grammar from a file.
 - `reset grammar` Resets the grammar to the default CFG.
+- `toggle latex` Toggles between nltk postscript output and LaTeX qtree text output. 
+- `help`
 - `quit` 
 
 The format of the productions and grammars should follow that for [nltk](http://www.nltk.org/book/ch08.html). 
