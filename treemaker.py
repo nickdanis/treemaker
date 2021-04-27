@@ -4,7 +4,7 @@ from nltk.draw.tree import draw_trees
 import re
 
 def parse_sentence(sentence):
-    '''parses a string s and draws the trees'''
+    '''parse a string s and draws the trees'''
     parses = []
     try:
         for tree in parser.parse(sentence.split()):
@@ -30,6 +30,7 @@ def parse_sentence(sentence):
             return
 
 def toggle_latex():
+    '''toggle between qtree LaTeX output and nltk postscript output'''
     global latex
     latex = not latex
     if latex:
@@ -39,14 +40,14 @@ def toggle_latex():
     return
         
 def update_parser():
-    '''updates the grammar and parser'''
+    '''update the grammar and parser'''
     global parser
     parser = nltk.ChartParser(grammar)
     print(f"Grammar updated with {len(grammar.productions())} total productions.")
     return
     
 def update_grammar(s,reset=False):
-    '''updates the grammar as a raw string'''
+    '''update the grammar as a raw string'''
     global grammar_raw, grammar
     if reset:
         grammar_raw = ''
@@ -55,13 +56,13 @@ def update_grammar(s,reset=False):
     return
 
 def show_productions(lhs):
-    '''prints all productions for a given lhs as string'''
+    '''print all productions for a given lhs as string'''
     for pr in grammar.productions(lhs=nltk.grammar.Nonterminal(lhs)):
         print(pr)
     return
 
 def learn_words(words):
-    '''takes a list of words and adds the relevant productions to the grammar'''
+    '''take a list of words and adds the relevant productions to the grammar'''
     words = list(set(words))
     new_rules = ""
     for w in words:
@@ -73,7 +74,7 @@ def learn_words(words):
     return
     
 def add_production():
-    '''adds a production the the string from the user'''
+    '''add a rule of the form X -> Y Z or W -> 'x' '''
     print("Enter a new rule:")
     production = input()
     update_grammar("\n"+production)
@@ -81,7 +82,7 @@ def add_production():
     return
 
 def save_grammar():
-    '''saves grammar to a text file'''
+    '''save grammar to a .cfg file'''
     print("Give a name:")
     name = input()
     filename = name + '.cfg'
@@ -91,7 +92,7 @@ def save_grammar():
     return
 
 def load_grammar():
-    '''loads a grammar from a text file directly as a grammar object'''
+    '''load a grammar from a .cfg file directly as a grammar object'''
     global grammar
     print("What is the name of the grammar?")
     filename = input()
@@ -111,7 +112,7 @@ def show_category(s):
     return
 
 def reset_grammar():
-    '''resets the grammar to the default LF cfg'''
+    '''reset the grammar to the default LF cfg'''
     update_grammar(lf_raw,reset=True)
     update_parser()
     return
@@ -122,19 +123,24 @@ def show_grammar():
     return
 
 def main():
-    print("Gimme a sentence:")
+    print("Enter a sentence to parse, or type help for more options:")
     user = input()
     if re.match(r'(show category )(.*)',user):
         cat = re.match(r'(show category) (.*)',user).group(2)
         show_category(cat)
     elif user in dispatch:
         dispatch[user]()
+    elif user == "help":
+        for item in dispatch:
+            print(item,"\t",dispatch[item].__doc__)
     elif user == "quit":
         print("bye!")
         return
     else:
         parse_sentence(user)
     main()
+
+category = re.compile(r'(show category )(.*)')
 
 dispatch = {
     "add rule" : add_production,
